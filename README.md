@@ -67,3 +67,5 @@ bin\Release\net9.0-windows\AppOneSpaceDashboard.exe
   Kepler's equation (true anomaly), so they can differ by a few degrees from the
   reference screenshot, which used mean longitudes (most visible for Mercury and Mars).
 - Eclipse results match the reference app exactly (verified for 2025–2027).
+
+AppOne Microservices UK Limited(https://app-one.co.uk)
