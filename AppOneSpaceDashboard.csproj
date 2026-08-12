@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>AppOneSpaceDashboard</AssemblyName>
+    <RootNamespace>AppOneSpaceDashboard</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Product>AppOne SpaceDashboard</Product>
+    <AssemblyTitle>AppOne SpaceDashboard 1.0</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <Company>AppOne Microservices</Company>
+  </PropertyGroup>
+
+</Project>
