@@ -62,7 +62,25 @@ public static class Astro
     public const double MEAN_MOON_DIST_ER        = 60.36;
     public const double MEAN_MOON_ANG_RADIUS_DEG = 0.259;
 
-    public static readonly int[] DaysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    // Common-year month lengths; February is corrected for leap years by
+    // DaysInMonth(year, month) — never index this array directly.
+    static readonly int[] CommonYearDaysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    // Proleptic Gregorian leap-year rule
+    public static bool IsLeapYear(int year) =>
+        (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+
+    public static int DaysInMonth(int year, int month) =>
+        month == 2 && IsLeapYear(year) ? 29 : CommonYearDaysInMonth[month - 1];
+
+    // 1-based day of year, February 29 included in leap years
+    public static int DayOfYear(int year, int month, int day)
+    {
+        int doy = day;
+        for (int mo = 1; mo < month; mo++)
+            doy += DaysInMonth(year, mo);
+        return doy;
+    }
 
     public static readonly string[] MonthName3 =
         { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -136,19 +154,17 @@ public static class Astro
     }
 
     // ── CalcTodayLon: date → day-of-year → ecliptic longitude ───────────────
-    //    Vernal equinox Mar 21 = day 80 = lon 0°, lon = (doy-80)*360/365.25
+    //    Vernal equinox Mar 21 = lon 0°, lon = (doy - doy(Mar 21))*360/365.25
+    //    The Mar 21 anchor is day 80 in a common year and 81 in a leap year,
+    //    so it must be recomputed per year rather than hard-coded.
     static void CalcTodayLon(DashState st)
     {
         st.TodayStr = MonthName3[st.Month - 1] + " " + st.Day + "  " + st.Year;
 
-        int dayOfYear = 0;
-        for (int mo = 1; mo <= st.Month - 1; mo++)
-            dayOfYear += DaysInMonth[mo - 1];
-        if (st.Month > 2 && ((st.Year % 4 == 0 && st.Year % 100 != 0) || st.Year % 400 == 0))
-            dayOfYear++;
-        dayOfYear += st.Day;
+        int dayOfYear    = DayOfYear(st.Year, st.Month, st.Day);
+        int equinoxDoy   = DayOfYear(st.Year, 3, 21);
 
-        double lon = Norm360((dayOfYear + st.FracDay - 80) * 360.0 / 365.25);
+        double lon = Norm360((dayOfYear + st.FracDay - equinoxDoy) * 360.0 / 365.25);
         st.TodayLon = lon;
         st.TodayDeg = F1(lon) + " deg";
 
